@@ -146,7 +146,7 @@ function clearAllItems(e) {
 
 checkUI();
 cardList.addEventListener("click", removeItemFromStorage);
-
+cardList.addEventListener("click", UpdateItem);
 filter.addEventListener("input", filterItem);
 button.addEventListener("click", clearAllItems);
 document.addEventListener("DOMContentLoaded", displayItemFromStorage);

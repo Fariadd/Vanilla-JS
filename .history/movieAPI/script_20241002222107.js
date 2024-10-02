@@ -134,19 +134,12 @@ function checkUI() {
 }
 function clearAllItems(e) {
   const liItems = cardList.querySelectorAll("li");
-
-  if (liItems.length === 0) {
-    console.log("do nothing");
-  } else {
-    cardList.innerHTML = "";
-    localStorage.removeItem("item");
-  }
-  checkUI();
+  liItems.forEach((li) => li.remove());
+  cardList.length === 0 ? "nothing" : (cardList.innerHTML = "");
 }
 
 checkUI();
 cardList.addEventListener("click", removeItemFromStorage);
-
 filter.addEventListener("input", filterItem);
 button.addEventListener("click", clearAllItems);
 document.addEventListener("DOMContentLoaded", displayItemFromStorage);

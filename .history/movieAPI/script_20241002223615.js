@@ -55,12 +55,13 @@ form.addEventListener("submit", (e) => {
     alert("Item already exists!");
     return;
   }
+
   createTodo(inputValue);
   addItemToStorage(inputValue);
   checkUI();
-  clearAllItems(inputValue);
-  input.value = "";
+  input.value = ""; // Clear the input field
 });
+
 function createTodo(todoText) {
   const li = document.createElement("li");
   li.textContent = todoText;
@@ -71,9 +72,13 @@ function createTodo(todoText) {
 
   li.appendChild(btn);
 
+  // Allow clicking the list item to update it
+  li.addEventListener("click", () => UpdateItem(li));
+
   // Append the new todo item to the list
   cardList.appendChild(li);
 }
+
 function addItemToStorage(newItem) {
   let itemFromStorage = getItemFromStorage();
   itemFromStorage.push(newItem);
@@ -91,18 +96,19 @@ function getItemFromStorage() {
 }
 
 function removeItemFromStorage(event) {
-  if (event.target.classList.contains("remove-btn"))
+  if (event.target.classList.contains("remove-btn")) {
     if (confirm("Delete")) {
       const li = event.target.parentElement;
-      const textItem = li.textContent.replace("Remove", "");
-      li.remove(); // remove from ui
+      const textItem = li.textContent.replace("Remove", "").trim();
+      li.remove(); // remove from UI
 
       // update local storage
       let itemsFromStorage = getItemFromStorage();
       itemsFromStorage = itemsFromStorage.filter((item) => item !== textItem);
       localStorage.setItem("item", JSON.stringify(itemsFromStorage));
     }
-  checkUI();
+    checkUI();
+  }
 }
 
 function existingItem(item) {
@@ -116,9 +122,7 @@ function filterItem(e) {
 
   liLists.forEach((item) => {
     const text = item.textContent.toLowerCase();
-    text.includes(event)
-      ? (item.style.display = "flex")
-      : (item.style.display = "none");
+    item.style.display = text.includes(event) ? "flex" : "none";
   });
 }
 
@@ -132,6 +136,7 @@ function checkUI() {
     button.style.display = "block";
   }
 }
+
 function clearAllItems(e) {
   const liItems = cardList.querySelectorAll("li");
 
@@ -144,9 +149,25 @@ function clearAllItems(e) {
   checkUI();
 }
 
+function UpdateItem(li) {
+  const currentText = li.firstChild.textContent.replace("Remove", "").trim();
+  const newText = prompt("Update your item:", currentText);
+
+  if (newText !== null && newText.trim() !== "") {
+    li.firstChild.nodeValue = newText; // Update the text node of the list item
+
+    // Update local storage
+    let itemsFromStorage = getItemFromStorage();
+    itemsFromStorage = itemsFromStorage.map((item) =>
+      item === currentText ? newText : item
+    ); // Replace old text with new text
+    localStorage.setItem("item", JSON.stringify(itemsFromStorage));
+    checkUI(); // Call to update the UI if necessary
+  }
+}
+
 checkUI();
 cardList.addEventListener("click", removeItemFromStorage);
-
 filter.addEventListener("input", filterItem);
 button.addEventListener("click", clearAllItems);
 document.addEventListener("DOMContentLoaded", displayItemFromStorage);

@@ -58,7 +58,6 @@ form.addEventListener("submit", (e) => {
   createTodo(inputValue);
   addItemToStorage(inputValue);
   checkUI();
-  clearAllItems(inputValue);
   input.value = "";
 });
 function createTodo(todoText) {
@@ -126,27 +125,12 @@ function checkUI() {
   const liLists = cardList.querySelectorAll("li");
   if (liLists.length === 0) {
     filter.style.display = "none";
-    button.style.display = "none";
   } else {
     filter.style.display = "block";
-    button.style.display = "block";
   }
-}
-function clearAllItems(e) {
-  const liItems = cardList.querySelectorAll("li");
-
-  if (liItems.length === 0) {
-    console.log("do nothing");
-  } else {
-    cardList.innerHTML = "";
-    localStorage.removeItem("item");
-  }
-  checkUI();
 }
 
 checkUI();
 cardList.addEventListener("click", removeItemFromStorage);
-
 filter.addEventListener("input", filterItem);
-button.addEventListener("click", clearAllItems);
 document.addEventListener("DOMContentLoaded", displayItemFromStorage);

@@ -144,9 +144,35 @@ function clearAllItems(e) {
   checkUI();
 }
 
+function UpdateItem(e) {
+  // Check if the clicked element is a list item
+  if (e.target.tagName === "LI") {
+    const li = e.target; // Get the clicked list item
+    const currentText = li.textContent.replace("Remove", "").trim(); // Get the current text, excluding "Remove"
+
+    // Prompt the user for a new item text
+    const newText = prompt("Update your item:", currentText);
+
+    // Check if the user provided a new value
+    if (newText !== null && newText.trim() !== "") {
+      // Update the list item's text
+      li.childNodes[0].nodeValue = newText; // Update the text node of the list item
+
+      // Optionally, update local storage here if necessary
+      let itemsFromStorage = getItemFromStorage();
+      itemsFromStorage = itemsFromStorage.map((item) =>
+        item === currentText ? newText : item
+      ); // Update the item in storage
+      localStorage.setItem("item", JSON.stringify(itemsFromStorage));
+
+      checkUI(); // Call this function to update the UI if necessary
+    }
+  }
+}
+
 checkUI();
 cardList.addEventListener("click", removeItemFromStorage);
-
+cardList.addEventListener("click", UpdateItem);
 filter.addEventListener("input", filterItem);
 button.addEventListener("click", clearAllItems);
 document.addEventListener("DOMContentLoaded", displayItemFromStorage);

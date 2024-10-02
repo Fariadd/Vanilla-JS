@@ -33,7 +33,6 @@ const input = document.querySelector(".input");
 const form = document.querySelector(".form");
 const cardList = document.querySelector(".card-list");
 const filter = document.querySelector("#filter");
-const button = document.querySelector("#button");
 
 function displayItemFromStorage() {
   let itemFromStorage = getItemFromStorage();
@@ -58,7 +57,6 @@ form.addEventListener("submit", (e) => {
   createTodo(inputValue);
   addItemToStorage(inputValue);
   checkUI();
-  clearAllItems(inputValue);
   input.value = "";
 });
 function createTodo(todoText) {
@@ -102,7 +100,6 @@ function removeItemFromStorage(event) {
       itemsFromStorage = itemsFromStorage.filter((item) => item !== textItem);
       localStorage.setItem("item", JSON.stringify(itemsFromStorage));
     }
-  checkUI();
 }
 
 function existingItem(item) {
@@ -124,29 +121,12 @@ function filterItem(e) {
 
 function checkUI() {
   const liLists = cardList.querySelectorAll("li");
-  if (liLists.length === 0) {
+  if (liLists !== 10) {
     filter.style.display = "none";
-    button.style.display = "none";
-  } else {
-    filter.style.display = "block";
-    button.style.display = "block";
+    return;
   }
 }
-function clearAllItems(e) {
-  const liItems = cardList.querySelectorAll("li");
-
-  if (liItems.length === 0) {
-    console.log("do nothing");
-  } else {
-    cardList.innerHTML = "";
-    localStorage.removeItem("item");
-  }
-  checkUI();
-}
-
 checkUI();
 cardList.addEventListener("click", removeItemFromStorage);
-
 filter.addEventListener("input", filterItem);
-button.addEventListener("click", clearAllItems);
 document.addEventListener("DOMContentLoaded", displayItemFromStorage);
