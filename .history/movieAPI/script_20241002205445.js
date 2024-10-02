@@ -116,4 +116,3 @@ document.addEventListener("DOMContentLoaded", displayItemFromStorage);
 function git() {
   let itemFromStorage = getItemFromStorage();
 }
-git();
