@@ -1,0 +1,28 @@
+const url = `https://jsonplaceholder.typicode.com/posts?_limit=5`;
+
+fetch(url, {})
+  .then((res) => res.json())
+  .then((data) => {
+    const container = document.querySelector(".container"); // Get the container element
+
+    // Loop through the fetched data and display movie info and images
+    data.forEach((post) => {
+      // Create a paragraph to show post title
+      const div = document.createElement("div");
+      div.classList.add("post");
+
+      const postTile = document.createElement("h2");
+      postTile.textContent = post.title;
+
+      const p = document.createElement("p");
+      p.textContent = post.body;
+      // Append the movie info and image to movieDiv
+
+      div.appendChild(postTile);
+      div.appendChild(p);
+    });
+
+    // Append the main div to the container
+    container.appendChild(div);
+  })
+  .catch((err) => console.log(err));

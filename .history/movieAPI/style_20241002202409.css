@@ -1,0 +1,77 @@
+/* Basic reset */
+* {
+   margin: 0;
+   padding: 0;
+   box-sizing: border-box;
+ }
+ 
+ /* Container styling */
+ .container {
+   max-width: 500px;
+   margin: 50px auto;
+   padding: 20px;
+   border: 1px solid #ccc;
+   border-radius: 10px;
+   background-color: #f9f9f9;
+   column-gap: 10px;
+ }
+ 
+ /* Form styling */
+ .form {
+   display: flex;
+   flex-direction: column;
+   justify-content: space-between;
+   margin-bottom: 20px;
+  
+ }
+ 
+ .input {
+   flex: 1;
+   padding: 10px;
+   border: 1px solid #ccc;
+   border-radius: 5px;
+   margin-right: 10px;
+   
+ }
+ 
+ .btn {
+   padding: 10px 20px;
+   border: none;
+   background-color: #007bff;
+   color: white;
+   border-radius: 5px;
+   cursor: pointer;
+ }
+ 
+ .btn:hover {
+   background-color: #0056b3;
+ }
+ 
+ /* Todo List */
+ .card-list {
+   list-style-type: none;
+ }
+ 
+ .card-list li {
+   padding: 10px;
+   border: 1px solid #ccc;
+   border-radius: 5px;
+   margin-bottom: 10px;
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+ }
+ 
+ /* Remove button */
+ .remove-btn {
+   background-color: #dc3545;
+   color: white;
+   border: none;
+   padding: 5px 10px;
+   cursor: pointer;
+   border-radius: 5px;
+ }
+ 
+ .remove-btn:hover {
+   background-color: #c82333;
+ }

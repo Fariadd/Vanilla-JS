@@ -1,0 +1,47 @@
+/* General styling */
+body {
+   font-family: Arial, sans-serif;
+   background-color: #f4f4f4;
+   margin: 0;
+   padding: 0;
+ }
+ 
+ /* Container for the products */
+ .container {
+   display: flex;
+   flex-wrap: wrap;
+   justify-content: center;
+   gap: 20px;
+   padding: 20px;
+ }
+ 
+ /* Styling each card */
+ .card {
+   background-color: white;
+   border: 1px solid #ccc;
+   border-radius: 10px;
+   width: 250px; /* Set a fixed width for cards */
+   padding: 10px;
+   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+   transition: transform 0.2s ease-in-out;
+   text-align: center;
+ }
+ 
+ /* Hover effect for each card */
+ .card:hover {
+   transform: scale(1.05);
+ }
+ 
+
+ 
+ /* Title and text styling */
+ .card h3 {
+   font-size: 18px;
+   margin: 10px 0;
+ }
+ 
+ .card p {
+   color: #777;
+   font-size: 14px;
+   margin-bottom: 10px;
+ }
