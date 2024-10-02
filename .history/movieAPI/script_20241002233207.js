@@ -17,7 +17,7 @@
 
 //       const img = document.createElement("img");
 //       img.classList.add("image");
-//       img.src = user.imag
+//       img.src = user.image;
 
 //       div.appendChild(titleText);
 //       div.appendChild(img);
@@ -34,8 +34,8 @@ const form = document.querySelector(".form");
 const cardList = document.querySelector(".card-list");
 const filter = document.querySelector("#filter");
 const button = document.querySelector("#button");
-const updateButton = document.querySelector(".btn");
-
+const formBtn = form.querySelector("button");
+let isEidtMode = false;
 function displayItemFromStorage() {
   let itemFromStorage = getItemFromStorage();
   itemFromStorage.forEach((item) => {
@@ -62,7 +62,6 @@ form.addEventListener("submit", (e) => {
 
   input.value = "";
 });
-
 function createTodo(todoText) {
   const li = document.createElement("li");
   li.textContent = todoText;
@@ -71,27 +70,10 @@ function createTodo(todoText) {
   btn.textContent = "Remove";
   btn.classList.add("remove-btn");
 
-  const updateBtn = document.createElement("i");
-  updateBtn.textContent = "Update";
-  updateBtn.classList.add("update");
-
   li.appendChild(btn);
-  li.appendChild(updateBtn);
 
-  updateBtn.addEventListener("click", () => setItemToEdit(updateBtn));
   // Append the new todo item to the list
   cardList.appendChild(li);
-}
-
-function checkUI() {
-  const liLists = cardList.querySelectorAll("li");
-  if (liLists.length === 0) {
-    filter.style.display = "none";
-    button.style.display = "none";
-  } else {
-    filter.style.display = "block";
-    button.style.display = "block";
-  }
 }
 function addItemToStorage(newItem) {
   let itemFromStorage = getItemFromStorage();
@@ -120,8 +102,15 @@ function removeItemFromStorage(event) {
       let itemsFromStorage = getItemFromStorage();
       itemsFromStorage = itemsFromStorage.filter((item) => item !== textItem);
       localStorage.setItem("item", JSON.stringify(itemsFromStorage));
+    } else if (setITemToEdit) {
+      setITemToEdit = event.target.parentElement;
     }
   checkUI();
+}
+function setITemToEdit(item) {
+  isEidtMode = true;
+  item.classList.add("mode");
+  formBtn.innerHTML = "<i>sas</i>";
 }
 
 function existingItem(item) {
@@ -150,10 +139,6 @@ function checkUI() {
     filter.style.display = "block";
     button.style.display = "block";
   }
-
-  updateButton.innerHTML = "<i>Add</i>";
-
-  isEidtMode = false;
 }
 function clearAllItems(e) {
   const liItems = cardList.querySelectorAll("li");

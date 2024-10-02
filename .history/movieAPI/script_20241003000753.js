@@ -1,40 +1,8 @@
-// const apiURL = "https://fakestoreapi.com/products";
-// const container = document.querySelector(".container");
-
-// const promice = async () => {
-//   try {
-//     const res = await fetch(apiURL);
-//     if (!res.ok) throw new Error("wrror resp");
-//     const data = await res.json();
-
-//     data.forEach((user) => {
-//       const div = document.createElement("div");
-//       div.classList.add("card");
-
-//       const titleText = document.createElement("h3");
-//       titleText.classList.add("title");
-//       titleText.textContent = user.title;
-
-//       const img = document.createElement("img");
-//       img.classList.add("image");
-//       img.src = user.imag
-
-//       div.appendChild(titleText);
-//       div.appendChild(img);
-//       container.appendChild(div);
-//     });
-//   } catch (err) {
-//     console.log(err.message);
-//   }
-// };
-// promice();
-
 const input = document.querySelector(".input");
 const form = document.querySelector(".form");
 const cardList = document.querySelector(".card-list");
 const filter = document.querySelector("#filter");
 const button = document.querySelector("#button");
-const updateButton = document.querySelector(".btn");
 
 function displayItemFromStorage() {
   let itemFromStorage = getItemFromStorage();
@@ -56,43 +24,40 @@ form.addEventListener("submit", (e) => {
     alert("Item already exists!");
     return;
   }
+
   createTodo(inputValue);
   addItemToStorage(inputValue);
   checkUI();
-
-  input.value = "";
+  input.value = ""; // Clear the input field
 });
 
 function createTodo(todoText) {
   const li = document.createElement("li");
   li.textContent = todoText;
 
-  const btn = document.createElement("button");
-  btn.textContent = "Remove";
-  btn.classList.add("remove-btn");
-
-  const updateBtn = document.createElement("i");
+  const updateBtn = document.createElement("button");
   updateBtn.textContent = "Update";
-  updateBtn.classList.add("update");
+  updateBtn.classList.add("update-btn");
 
-  li.appendChild(btn);
+  const removeBtn = document.createElement("button");
+  removeBtn.textContent = "Remove";
+  removeBtn.classList.add("remove-btn");
+
   li.appendChild(updateBtn);
+  li.appendChild(removeBtn);
 
+  // Allow clicking the update button to change its background color to green
   updateBtn.addEventListener("click", () => setItemToEdit(updateBtn));
+
   // Append the new todo item to the list
   cardList.appendChild(li);
 }
 
-function checkUI() {
-  const liLists = cardList.querySelectorAll("li");
-  if (liLists.length === 0) {
-    filter.style.display = "none";
-    button.style.display = "none";
-  } else {
-    filter.style.display = "block";
-    button.style.display = "block";
-  }
+function setItemToEdit(updateBtn) {
+  // Change the background color of the update button to green
+  updateBtn.style.backgroundColor = "lightgreen"; // Change color of the update button only
 }
+
 function addItemToStorage(newItem) {
   let itemFromStorage = getItemFromStorage();
   itemFromStorage.push(newItem);
@@ -110,18 +75,19 @@ function getItemFromStorage() {
 }
 
 function removeItemFromStorage(event) {
-  if (event.target.classList.contains("remove-btn"))
+  if (event.target.classList.contains("remove-btn")) {
     if (confirm("Delete")) {
       const li = event.target.parentElement;
-      const textItem = li.textContent.replace("Remove", "");
-      li.remove(); // remove from ui
+      const textItem = li.textContent.replace("Remove", "").trim();
+      li.remove(); // remove from UI
 
       // update local storage
       let itemsFromStorage = getItemFromStorage();
       itemsFromStorage = itemsFromStorage.filter((item) => item !== textItem);
       localStorage.setItem("item", JSON.stringify(itemsFromStorage));
     }
-  checkUI();
+    checkUI();
+  }
 }
 
 function existingItem(item) {
@@ -135,9 +101,7 @@ function filterItem(e) {
 
   liLists.forEach((item) => {
     const text = item.textContent.toLowerCase();
-    text.includes(event)
-      ? (item.style.display = "flex")
-      : (item.style.display = "none");
+    item.style.display = text.includes(event) ? "flex" : "none";
   });
 }
 
@@ -150,11 +114,8 @@ function checkUI() {
     filter.style.display = "block";
     button.style.display = "block";
   }
-
-  updateButton.innerHTML = "<i>Add</i>";
-
-  isEidtMode = false;
 }
+
 function clearAllItems(e) {
   const liItems = cardList.querySelectorAll("li");
 
@@ -169,7 +130,6 @@ function clearAllItems(e) {
 
 checkUI();
 cardList.addEventListener("click", removeItemFromStorage);
-
 filter.addEventListener("input", filterItem);
 button.addEventListener("click", clearAllItems);
 document.addEventListener("DOMContentLoaded", displayItemFromStorage);

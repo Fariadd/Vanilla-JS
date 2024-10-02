@@ -36,6 +36,7 @@ const filter = document.querySelector("#filter");
 const button = document.querySelector("#button");
 const updateButton = document.querySelector(".btn");
 
+let isEidtMode = false;
 function displayItemFromStorage() {
   let itemFromStorage = getItemFromStorage();
   itemFromStorage.forEach((item) => {
@@ -52,6 +53,14 @@ form.addEventListener("submit", (e) => {
     return;
   }
 
+  if (isEidtMode) {
+    const itemToEdit = document.querySelector(".update");
+    removeItemFromStorage(itemToEdit.textContent);
+    itemToEdit.classList.remove("update");
+    itemToEdit.remove();
+    isEidtMode = false;
+  }
+
   if (existingItem(inputValue)) {
     alert("Item already exists!");
     return;
@@ -62,7 +71,6 @@ form.addEventListener("submit", (e) => {
 
   input.value = "";
 });
-
 function createTodo(todoText) {
   const li = document.createElement("li");
   li.textContent = todoText;
@@ -83,6 +91,12 @@ function createTodo(todoText) {
   cardList.appendChild(li);
 }
 
+function setItemToEdit(li) {
+  updateButton.style.backgroundColor = "green";
+
+  document.querySelector(".update").style.backgroundColor = "green";
+  input.value = li.textContent;
+}
 function checkUI() {
   const liLists = cardList.querySelectorAll("li");
   if (liLists.length === 0) {

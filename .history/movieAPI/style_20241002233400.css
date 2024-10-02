@@ -43,7 +43,10 @@
    border-radius: 5px;
    cursor: pointer;
  }
-
+ .update {
+  color: #ccc;
+  cursor: pointer;
+}
  #button{
   width: 100%;
   padding: 10px 20px;
@@ -71,15 +74,6 @@
    display: flex;
    justify-content: space-between;
    align-items: center;
- }
- .card-list .update{
-  color: #ccc;
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  cursor: pointer;
-  border-radius: 5px;
  }
  
  /* Remove button */

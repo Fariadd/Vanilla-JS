@@ -62,7 +62,6 @@ form.addEventListener("submit", (e) => {
 
   input.value = "";
 });
-
 function createTodo(todoText) {
   const li = document.createElement("li");
   li.textContent = todoText;
@@ -83,6 +82,13 @@ function createTodo(todoText) {
   cardList.appendChild(li);
 }
 
+function setItemToEdit(todoText, li) {
+  input.value = todoText;
+  isEditMode = true; // Set edit mode to true
+  currentEditItem = li; // Store the current item to be edited
+  document.querySelectorALL(".btn").style.backgroundColor = "green"; // Change button color to green
+  document.querySelector(".btn").textContent = "Update"; // Change button text to "Update"
+}
 function checkUI() {
   const liLists = cardList.querySelectorAll("li");
   if (liLists.length === 0) {

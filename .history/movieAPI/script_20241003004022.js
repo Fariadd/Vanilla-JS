@@ -34,7 +34,9 @@ const form = document.querySelector(".form");
 const cardList = document.querySelector(".card-list");
 const filter = document.querySelector("#filter");
 const button = document.querySelector("#button");
-const updateButton = document.querySelector(".btn");
+
+let isEditMode = false; // Track whether we are in edit mode
+let currentEditItem; // Store the item currently being edited
 
 function displayItemFromStorage() {
   let itemFromStorage = getItemFromStorage();
@@ -52,14 +54,20 @@ form.addEventListener("submit", (e) => {
     return;
   }
 
-  if (existingItem(inputValue)) {
+  if (existingItem(inputValue) && !isEditMode) {
     alert("Item already exists!");
     return;
   }
-  createTodo(inputValue);
-  addItemToStorage(inputValue);
-  checkUI();
 
+  if (isEditMode) {
+    // Update existing item
+    updateItem(inputValue);
+  } else {
+    createTodo(inputValue);
+    addItemToStorage(inputValue);
+  }
+
+  checkUI();
   input.value = "";
 });
 
@@ -67,32 +75,53 @@ function createTodo(todoText) {
   const li = document.createElement("li");
   li.textContent = todoText;
 
-  const btn = document.createElement("button");
-  btn.textContent = "Remove";
-  btn.classList.add("remove-btn");
+  const removeBtn = document.createElement("button");
+  removeBtn.textContent = "Remove";
+  removeBtn.classList.add("remove-btn");
 
   const updateBtn = document.createElement("i");
   updateBtn.textContent = "Update";
   updateBtn.classList.add("update");
 
-  li.appendChild(btn);
+  li.appendChild(removeBtn);
   li.appendChild(updateBtn);
 
-  updateBtn.addEventListener("click", () => setItemToEdit(updateBtn));
+  // Allow clicking the update button to set the item to edit
+  updateBtn.addEventListener("click", () => setItemToEdit(todoText, li));
+
   // Append the new todo item to the list
   cardList.appendChild(li);
 }
 
-function checkUI() {
-  const liLists = cardList.querySelectorAll("li");
-  if (liLists.length === 0) {
-    filter.style.display = "none";
-    button.style.display = "none";
-  } else {
-    filter.style.display = "block";
-    button.style.display = "block";
-  }
+function setItemToEdit(todoText, li) {
+  input.value = todoText;
+  isEditMode = true; // Set edit mode to true
+  currentEditItem = li; // Store the current item to be edited
+  button.style.backgroundColor = "green"; // Change button color to green
+  button.textContent = "Update"; // Change button text to "Update"
 }
+
+function updateItem(newText) {
+  if (currentEditItem) {
+    currentEditItem.firstChild.nodeValue = newText; // Update the text of the current item
+
+    // Update local storage
+    let itemsFromStorage = getItemFromStorage();
+    const oldText = currentEditItem.textContent
+      .replace("UpdateRemove", "")
+      .trim(); // Get the old text
+    const index = itemsFromStorage.indexOf(oldText);
+    if (index > -1) {
+      itemsFromStorage[index] = newText; // Replace old text with new text
+      localStorage.setItem("item", JSON.stringify(itemsFromStorage)); // Update local storage
+    }
+  }
+  // Reset the edit mode
+  isEditMode = false;
+  button.style.backgroundColor = ""; // Reset button color
+  button.textContent = "Add"; // Reset button text
+}
+
 function addItemToStorage(newItem) {
   let itemFromStorage = getItemFromStorage();
   itemFromStorage.push(newItem);
@@ -110,18 +139,19 @@ function getItemFromStorage() {
 }
 
 function removeItemFromStorage(event) {
-  if (event.target.classList.contains("remove-btn"))
+  if (event.target.classList.contains("remove-btn")) {
     if (confirm("Delete")) {
       const li = event.target.parentElement;
-      const textItem = li.textContent.replace("Remove", "");
-      li.remove(); // remove from ui
+      const textItem = li.textContent.replace("Remove", "").trim();
+      li.remove(); // remove from UI
 
-      // update local storage
+      // Update local storage
       let itemsFromStorage = getItemFromStorage();
       itemsFromStorage = itemsFromStorage.filter((item) => item !== textItem);
       localStorage.setItem("item", JSON.stringify(itemsFromStorage));
     }
-  checkUI();
+    checkUI();
+  }
 }
 
 function existingItem(item) {
@@ -150,11 +180,8 @@ function checkUI() {
     filter.style.display = "block";
     button.style.display = "block";
   }
-
-  updateButton.innerHTML = "<i>Add</i>";
-
-  isEidtMode = false;
 }
+
 function clearAllItems(e) {
   const liItems = cardList.querySelectorAll("li");
 
@@ -169,7 +196,6 @@ function clearAllItems(e) {
 
 checkUI();
 cardList.addEventListener("click", removeItemFromStorage);
-
 filter.addEventListener("input", filterItem);
 button.addEventListener("click", clearAllItems);
 document.addEventListener("DOMContentLoaded", displayItemFromStorage);

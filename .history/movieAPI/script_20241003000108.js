@@ -34,8 +34,8 @@ const form = document.querySelector(".form");
 const cardList = document.querySelector(".card-list");
 const filter = document.querySelector("#filter");
 const button = document.querySelector("#button");
-const updateButton = document.querySelector(".btn");
 
+let isEidtMode = false;
 function displayItemFromStorage() {
   let itemFromStorage = getItemFromStorage();
   itemFromStorage.forEach((item) => {
@@ -62,7 +62,6 @@ form.addEventListener("submit", (e) => {
 
   input.value = "";
 });
-
 function createTodo(todoText) {
   const li = document.createElement("li");
   li.textContent = todoText;
@@ -81,17 +80,6 @@ function createTodo(todoText) {
   updateBtn.addEventListener("click", () => setItemToEdit(updateBtn));
   // Append the new todo item to the list
   cardList.appendChild(li);
-}
-
-function checkUI() {
-  const liLists = cardList.querySelectorAll("li");
-  if (liLists.length === 0) {
-    filter.style.display = "none";
-    button.style.display = "none";
-  } else {
-    filter.style.display = "block";
-    button.style.display = "block";
-  }
 }
 function addItemToStorage(newItem) {
   let itemFromStorage = getItemFromStorage();
@@ -123,6 +111,9 @@ function removeItemFromStorage(event) {
     }
   checkUI();
 }
+function setItemToEdit(li) {
+  li.style.backgroundColor = "green";
+}
 
 function existingItem(item) {
   let itemFromStorage = getItemFromStorage();
@@ -150,10 +141,6 @@ function checkUI() {
     filter.style.display = "block";
     button.style.display = "block";
   }
-
-  updateButton.innerHTML = "<i>Add</i>";
-
-  isEidtMode = false;
 }
 function clearAllItems(e) {
   const liItems = cardList.querySelectorAll("li");

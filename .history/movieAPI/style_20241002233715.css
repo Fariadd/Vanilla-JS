@@ -69,17 +69,12 @@
    border-radius: 5px;
    margin-bottom: 10px;
    display: flex;
+
    justify-content: space-between;
    align-items: center;
  }
  .card-list .update{
-  color: #ccc;
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  cursor: pointer;
-  border-radius: 5px;
+  color:aliceblue #cc2
  }
  
  /* Remove button */

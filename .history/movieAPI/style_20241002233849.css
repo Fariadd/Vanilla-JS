@@ -73,13 +73,15 @@
    align-items: center;
  }
  .card-list .update{
-  color: #ccc;
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  cursor: pointer;
+  color:#ccc;
+  padding: 5px;
+  border: 1px solid #ccc;
   border-radius: 5px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
  }
  
  /* Remove button */
