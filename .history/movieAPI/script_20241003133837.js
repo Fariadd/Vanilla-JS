@@ -1,6 +1,33 @@
-let currentEditItem = null; // To track the item being edited
-const originalButtonText = "Add Item"; // Store the default button text
-const originalButtonColor = "#007bff"; // Store the default button color
+// const apiURL = "https://fakestoreapi.com/products";
+// const container = document.querySelector(".container");
+
+// const promice = async () => {
+//   try {
+//     const res = await fetch(apiURL);
+//     if (!res.ok) throw new Error("wrror resp");
+//     const data = await res.json();
+
+//     data.forEach((user) => {
+//       const div = document.createElement("div");
+//       div.classList.add("card");
+
+//       const titleText = document.createElement("h3");
+//       titleText.classList.add("title");
+//       titleText.textContent = user.title;
+
+//       const img = document.createElement("img");
+//       img.classList.add("image");
+//       img.src = user.imag
+
+//       div.appendChild(titleText);
+//       div.appendChild(img);
+//       container.appendChild(div);
+//     });
+//   } catch (err) {
+//     console.log(err.message);
+//   }
+// };
+// promice();
 
 const input = document.querySelector(".input");
 const form = document.querySelector(".form");
@@ -8,6 +35,9 @@ const cardList = document.querySelector(".card-list");
 const filter = document.querySelector("#filter");
 const button = document.querySelector("#button");
 const updateButton = document.querySelector(".btn");
+
+let isEditMode = false; // Track whether we are in edit mode
+let currentEditItem; // Store the item currently being edited
 
 function displayItemFromStorage() {
   let itemFromStorage = getItemFromStorage();
@@ -25,83 +55,71 @@ form.addEventListener("submit", (e) => {
     return;
   }
 
-  if (currentEditItem) {
-    updateItem(inputValue); // If editing, update item
+  if (existingItem(inputValue) && !isEditMode) {
+    alert("Item already exists!");
+    return;
+  }
+
+  if (isEditMode) {
+    // Update existing item
+    updateItem(inputValue);
   } else {
-    if (existingItem(inputValue)) {
-      alert("Item already exists!");
-      return;
-    }
     createTodo(inputValue);
     addItemToStorage(inputValue);
   }
 
   checkUI();
-  input.value = ""; // Clear the input after adding/updating
+  input.value = "";
 });
 
 function createTodo(todoText) {
   const li = document.createElement("li");
   li.textContent = todoText;
 
-  const btn = document.createElement("button");
-  btn.textContent = "Remove";
-  btn.classList.add("remove-btn");
+  const removeBtn = document.createElement("button");
+  removeBtn.textContent = "Remove";
+  removeBtn.classList.add("remove-btn");
 
   const updateBtn = document.createElement("i");
   updateBtn.textContent = "Update";
-  updateBtn.classList.add("update-btn");
+  updateBtn.classList.add("update");
 
-  li.appendChild(btn);
+  li.appendChild(removeBtn);
   li.appendChild(updateBtn);
 
-  updateBtn.addEventListener("click", () => setItemToEdit(li));
+  // Allow clicking the update button to set the item to edit
+  updateBtn.addEventListener("click", () => setItemToEdit(todoText, li));
+
   // Append the new todo item to the list
   cardList.appendChild(li);
 }
 
-function setItemToEdit(li) {
-  currentEditItem = li; // Track the item being edited
-  input.value = li.firstChild.textContent.trim(); // Set the current text into input field
-  updateButton.textContent = "Update Item"; // Change button to "Update"
+function setItemToEdit(todoText, li) {
+  input.value = todoText;
+  isEditMode = true; // Set edit mode to true
+  currentEditItem = li; // Store the current item to be edited
   updateButton.style.backgroundColor = "green"; // Change button color to green
+  updateButton.textContent = "Update"; // Change button text to "Update"
 }
 
-function updateItem(newtext) {
+function updateItem(newText) {
   if (currentEditItem) {
-    const oldText = currentEditItem.firstChild.textContent.trim();
+    currentEditItem.firstChild.nodeValue = newText; // Update the text of the current item
 
-    // Update the UI
-    currentEditItem.firstChild.textContent = newtext;
-
-    let itemFromStorage = getItemFromStorage();
-    const index = itemFromStorage.indexOf(oldText);
+    // Update local storage
+    let itemsFromStorage = getItemFromStorage();
+    const oldText = currentEditItem.textContent
+      .replace("UpdateRemove", "")
+      .trim(); // Get the old text
+    const index = itemsFromStorage.indexOf(oldText);
     if (index > -1) {
-      itemFromStorage[index] = newtext; // Replace the old text with the new one
-      localStorage.setItem("item", JSON.stringify(itemFromStorage));
+      itemsFromStorage[index] = newText; // Replace old text with new text
+      localStorage.setItem("item", JSON.stringify(itemsFromStorage)); // Update local storage
+      removeItemFromStorage(itemsFromStorage);
     }
   }
-  // Reset the form
-  resetEditMode();
-  checkUI();
-}
-
-function resetEditMode() {
-  currentEditItem = null; // Clear the item being edited
-  updateButton.textContent = originalButtonText; // Reset button text
-  updateButton.style.backgroundColor = originalButtonColor; // Reset button color
-  input.value = ""; // Clear the input field
-}
-
-function checkUI() {
-  const liLists = cardList.querySelectorAll("li");
-  if (liLists.length === 0) {
-    filter.style.display = "none";
-    button.style.display = "none";
-  } else {
-    filter.style.display = "block";
-    button.style.display = "block";
-  }
+  // Reset the edit mode
+  isEditMode = false;
 }
 
 function addItemToStorage(newItem) {
@@ -124,16 +142,16 @@ function removeItemFromStorage(event) {
   if (event.target.classList.contains("remove-btn")) {
     if (confirm("Delete")) {
       const li = event.target.parentElement;
-      const textItem = li.firstChild.textContent.trim();
-      li.remove(); // Remove from UI
+      const textItem = li.textContent.replace("Remove", "").trim();
+      li.remove(); // remove from UI
 
       // Update local storage
       let itemsFromStorage = getItemFromStorage();
       itemsFromStorage = itemsFromStorage.filter((item) => item !== textItem);
       localStorage.setItem("item", JSON.stringify(itemsFromStorage));
     }
+    checkUI();
   }
-  checkUI();
 }
 
 function existingItem(item) {
@@ -153,7 +171,20 @@ function filterItem(e) {
   });
 }
 
-function clearAllItems() {
+function checkUI() {
+  const liLists = cardList.querySelectorAll("li");
+  if (liLists.length === 0) {
+    filter.style.display = "none";
+    button.style.display = "none";
+  } else {
+    filter.style.display = "block";
+    button.style.display = "block";
+  }
+  updateButton.innerHTML = "<i>Add</i>";
+  updateButton.style.backgroundColor = "#0056b3";
+}
+
+function clearAllItems(e) {
   const liItems = cardList.querySelectorAll("li");
 
   if (liItems.length === 0) {

@@ -1,6 +1,33 @@
-let currentEditItem = null; // To track the item being edited
-const originalButtonText = "Add Item"; // Store the default button text
-const originalButtonColor = "#007bff"; // Store the default button color
+// const apiURL = "https://fakestoreapi.com/products";
+// const container = document.querySelector(".container");
+
+// const promice = async () => {
+//   try {
+//     const res = await fetch(apiURL);
+//     if (!res.ok) throw new Error("wrror resp");
+//     const data = await res.json();
+
+//     data.forEach((user) => {
+//       const div = document.createElement("div");
+//       div.classList.add("card");
+
+//       const titleText = document.createElement("h3");
+//       titleText.classList.add("title");
+//       titleText.textContent = user.title;
+
+//       const img = document.createElement("img");
+//       img.classList.add("image");
+//       img.src = user.imag
+
+//       div.appendChild(titleText);
+//       div.appendChild(img);
+//       container.appendChild(div);
+//     });
+//   } catch (err) {
+//     console.log(err.message);
+//   }
+// };
+// promice();
 
 const input = document.querySelector(".input");
 const form = document.querySelector(".form");
@@ -25,21 +52,17 @@ form.addEventListener("submit", (e) => {
     return;
   }
 
-  if (currentEditItem) {
-    updateItem(inputValue); // If editing, update item
-  } else {
-    if (existingItem(inputValue)) {
-      alert("Item already exists!");
-      return;
-    }
-    createTodo(inputValue);
-    addItemToStorage(inputValue);
+  if (existingItem(inputValue)) {
+    alert("Item already exists!");
+    return;
   }
-
+  createTodo(inputValue);
+  addItemToStorage(inputValue);
+  setItemToEdit(updateButton);
   checkUI();
-  input.value = ""; // Clear the input after adding/updating
-});
 
+  input.value = "";
+});
 function createTodo(todoText) {
   const li = document.createElement("li");
   li.textContent = todoText;
@@ -50,49 +73,21 @@ function createTodo(todoText) {
 
   const updateBtn = document.createElement("i");
   updateBtn.textContent = "Update";
-  updateBtn.classList.add("update-btn");
+  updateBtn.classList.add("update");
 
   li.appendChild(btn);
   li.appendChild(updateBtn);
 
-  updateBtn.addEventListener("click", () => setItemToEdit(li));
   // Append the new todo item to the list
   cardList.appendChild(li);
 }
-
+updateButton.addEventListener("click", setItemToEdit);
 function setItemToEdit(li) {
-  currentEditItem = li; // Track the item being edited
-  input.value = li.firstChild.textContent.trim(); // Set the current text into input field
-  updateButton.textContent = "Update Item"; // Change button to "Update"
-  updateButton.style.backgroundColor = "green"; // Change button color to green
+  updateButton.style.backgroundColor = "green";
+
+  document.querySelector(".update").style.backgroundColor = "green";
+  input.value = li.textContent;
 }
-
-function updateItem(newtext) {
-  if (currentEditItem) {
-    const oldText = currentEditItem.firstChild.textContent.trim();
-
-    // Update the UI
-    currentEditItem.firstChild.textContent = newtext;
-
-    let itemFromStorage = getItemFromStorage();
-    const index = itemFromStorage.indexOf(oldText);
-    if (index > -1) {
-      itemFromStorage[index] = newtext; // Replace the old text with the new one
-      localStorage.setItem("item", JSON.stringify(itemFromStorage));
-    }
-  }
-  // Reset the form
-  resetEditMode();
-  checkUI();
-}
-
-function resetEditMode() {
-  currentEditItem = null; // Clear the item being edited
-  updateButton.textContent = originalButtonText; // Reset button text
-  updateButton.style.backgroundColor = originalButtonColor; // Reset button color
-  input.value = ""; // Clear the input field
-}
-
 function checkUI() {
   const liLists = cardList.querySelectorAll("li");
   if (liLists.length === 0) {
@@ -102,8 +97,11 @@ function checkUI() {
     filter.style.display = "block";
     button.style.display = "block";
   }
-}
 
+  updateButton.innerHTML = "<i></i>add";
+
+  isEidtMode = false;
+}
 function addItemToStorage(newItem) {
   let itemFromStorage = getItemFromStorage();
   itemFromStorage.push(newItem);
@@ -121,18 +119,17 @@ function getItemFromStorage() {
 }
 
 function removeItemFromStorage(event) {
-  if (event.target.classList.contains("remove-btn")) {
+  if (event.target.classList.contains("remove-btn"))
     if (confirm("Delete")) {
       const li = event.target.parentElement;
-      const textItem = li.firstChild.textContent.trim();
-      li.remove(); // Remove from UI
+      const textItem = li.textContent.replace("Remove", "");
+      li.remove(); // remove from ui
 
-      // Update local storage
+      // update local storage
       let itemsFromStorage = getItemFromStorage();
       itemsFromStorage = itemsFromStorage.filter((item) => item !== textItem);
       localStorage.setItem("item", JSON.stringify(itemsFromStorage));
     }
-  }
   checkUI();
 }
 
@@ -153,7 +150,7 @@ function filterItem(e) {
   });
 }
 
-function clearAllItems() {
+function clearAllItems(e) {
   const liItems = cardList.querySelectorAll("li");
 
   if (liItems.length === 0) {
@@ -167,6 +164,7 @@ function clearAllItems() {
 
 checkUI();
 cardList.addEventListener("click", removeItemFromStorage);
+
 filter.addEventListener("input", filterItem);
 button.addEventListener("click", clearAllItems);
 document.addEventListener("DOMContentLoaded", displayItemFromStorage);

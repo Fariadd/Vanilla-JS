@@ -153,7 +153,7 @@ function filterItem(e) {
   });
 }
 
-function clearAllItems() {
+function clearAllItems(e) {
   const liItems = cardList.querySelectorAll("li");
 
   if (liItems.length === 0) {

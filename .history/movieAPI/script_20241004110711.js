@@ -67,25 +67,6 @@ function setItemToEdit(li) {
   updateButton.style.backgroundColor = "green"; // Change button color to green
 }
 
-function updateItem(newtext) {
-  if (currentEditItem) {
-    const oldText = currentEditItem.firstChild.textContent.trim();
-
-    // Update the UI
-    currentEditItem.firstChild.textContent = newtext;
-
-    let itemFromStorage = getItemFromStorage();
-    const index = itemFromStorage.indexOf(oldText);
-    if (index > -1) {
-      itemFromStorage[index] = newtext; // Replace the old text with the new one
-      localStorage.setItem("item", JSON.stringify(itemFromStorage));
-    }
-  }
-  // Reset the form
-  resetEditMode();
-  checkUI();
-}
-
 function resetEditMode() {
   currentEditItem = null; // Clear the item being edited
   updateButton.textContent = originalButtonText; // Reset button text
@@ -153,7 +134,7 @@ function filterItem(e) {
   });
 }
 
-function clearAllItems() {
+function clearAllItems(e) {
   const liItems = cardList.querySelectorAll("li");
 
   if (liItems.length === 0) {
