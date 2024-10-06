@@ -15,6 +15,7 @@ todoForm.addEventListener("submit", function (e) {
 
   // Ensure the input is not empty
   if (taskText !== "") {
+    alert("add item");
     if (editMode) {
       // If we are in edit mode, update the task
       updateTask(taskText);

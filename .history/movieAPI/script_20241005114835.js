@@ -1,4 +1,6 @@
 let currentEditItem = null; // To track the item being edited
+const originalButtonText = "Add Item"; // Store the default button text
+const originalButtonColor = "#007bff"; // Store the default button color
 
 const input = document.querySelector(".input");
 const form = document.querySelector(".form");

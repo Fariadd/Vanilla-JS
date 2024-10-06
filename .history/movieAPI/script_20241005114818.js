@@ -1,4 +1,6 @@
 let currentEditItem = null; // To track the item being edited
+const originalButtonText = "Add Item"; // Store the default button text
+const originalButtonColor = "#007bff"; // Store the default button color
 
 const input = document.querySelector(".input");
 const form = document.querySelector(".form");
@@ -87,7 +89,7 @@ function updateItem(newtext) {
 function resetEditMode() {
   currentEditItem = null; // Clear the item being edited
   updateButton.textContent = "Add"; // Reset button text
-  updateButton.style.backgroundColor = "#007bff"; // Reset button color
+  updateButton.style.backgroundColor = originalButtonColor; // Reset button color
   input.value = ""; // Clear the input field
 }
 
